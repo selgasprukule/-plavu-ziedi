@@ -1,1 +1,1 @@
-# -plavu-ziedi
+# plavu-ziedi
