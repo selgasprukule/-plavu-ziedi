@@ -110,7 +110,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 </div>
 <script>
 const AI_URL = "https://script.google.com/macros/s/AKfycbyPjPmxFRFUzZ-daWluMy1ocjZxiYlXbkeuZg-lIbPA-PtfwnzHipbdKWA_kib-lJiA/exec";
-const RESULTS_URL = "https://script.google.com/macros/s/AKfycbxqXcQnUka4o-d4CjNFrYZnG7vnFQZOIekmFtyIgBXnEeRI-IpB5GG1Dtc3fmv-LZU/exec";
+const RESULTS_URL = "https://script.google.com/macros/s/AKfycbzL_MFtm6a7xsUDIp0XAWfQvMdPTrDtASMe-3pICFNB8Kbm6OBi40eXT3FnA6ShrPhg/exec";
 const SEASONS = [
   { id:'pavasaris', label:'Pavasaris', emoji:'🌱', months:'Marts–Maijs' },
   { id:'vasara', label:'Vasara', emoji:'☀️', months:'Jūnijs–Augusts' },
@@ -260,7 +260,20 @@ function skipPlant(){st.results.push({name:st.queue[st.cur].name,pts:0,found:fal
 function playAgain(){startSeason(st.season);}
 function newPlayer(){st={...st,view:'name',playerName:''};render();}
 
-render();
+async function loadPlants(){
+  try{
+    const resp=await fetch(RESULTS_URL+'?action=augi');
+    if(resp.ok){
+      const data=await resp.json();
+      if(data.augi&&data.augi.length>0){
+        plants=data.augi.map((p,i)=>({...p,id:i+1}));
+        nextId=plants.length+1;
+      }
+    }
+  }catch(e){}
+}
+
+loadPlants().then(()=>render());
 </script>
 </body>
 </html>
