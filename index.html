@@ -109,24 +109,109 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
   <div class="screen" id="ui"></div>
 </div>
 <script>
-const AI_URL="https://script.google.com/macros/s/AKfycbyPjPmxFRFUzZ-daWluMy1ocjZxiYlXbkeuZg-lIbPA-PtfwnzHipbdKWA_kib-lJiA/exec";
-const RESULTS_URL="https://script.google.com/macros/s/AKfycbxndNwCr08fGtkYyJEmQageroXmeN3F-RfO4Tptl0YJa9qvXuqqN3Nf7sauzD02IvEW/exec";
-const SEASONS=[{id:'pavasaris',label:'Pavasaris',emoji:'🌱',months:'Marts–Maijs'},{id:'vasara',label:'Vasara',emoji:'☀️',months:'Jūnijs–Augusts'},{id:'rudens',label:'Rudens',emoji:'🍂',months:'Septembris–Oktobris'}];
-let plants=[{id:1,name:'Pļavas margrietiņa',latin:'Leucanthemum vulgare',hint:'Balti ziedlapiņi ap dzeltenu centru. Bieži aug pļavās un ceļmalās.',season:'vasara'},{id:2,name:'Sarkanais āboliņš',latin:'Trifolium pratense',hint:'Apaļas rozā-purpura ziedu galviņas, trīs lapas ar gaišu lāsīti.',season:'vasara'},{id:3,name:'Pienene',latin:'Taraxacum officinale',hint:'Spilgti dzelteni ziedi vai balts pūkainis sēklu bumbulis.',season:'pavasaris'},{id:4,name:'Zilais zvaniņš',latin:'Campanula patula',hint:'Smalki violeti-zili zvaniņi uz plāniem kātiem.',season:'vasara'},{id:5,name:'Asinszāle',latin:'Hypericum perforatum',hint:'Dzelteni 5-lapiņu ziedi. Lapas izskatās ar caurumiem pret gaismu.',season:'vasara'},{id:6,name:'Parastā vīgrieze',latin:'Filipendula ulmaria',hint:'Balti smalki ziediņi biezos ķekaros. Smaržo maigu.',season:'vasara'},{id:7,name:'Āra plūksna',latin:'Achillea millefolium',hint:'Plakanvirsas baltu vai rozā ziedu klāji. Smalki sazarotas lapas.',season:'vasara'},{id:8,name:'Pavasara gaiļbiksīte',latin:'Primula veris',hint:'Dzelteni mazie ziediņi karātavās uz viena kāta. Lapas rozetē.',season:'pavasaris'},{id:9,name:'Zilā rudzupuķe',latin:'Centaurea cyanus',hint:'Spilgti zili vai violeti ziedi ar iegriestiem ziedlapiņiem.',season:'vasara'},{id:10,name:'Meža silene',latin:'Silene dioica',hint:'Koši rozā piecziedlapu ziedi. Aug mitros pļavas malās.',season:'pavasaris'},{id:11,name:'Parastā vērsene',latin:'Calluna vulgaris',hint:'Sīki violeti-rozā zvaniņi uz kļūstošiem zariem.',season:'rudens'},{id:12,name:'Rudens dadzis',latin:'Cirsium arvense',hint:'Violeta vai rozā dadzīga ziedu galviņa. Lapas ar dzeloņiem.',season:'rudens'}];
-let nextId=13;
-let st={view:'name',playerName:'',season:null,queue:[],cur:0,score:0,att:0,results:[],phase:'task',imgData:null,imgMime:null,explain:null,errMsg:null,editPlant:null,leaderboard:[]};
+const AI_URL = "https://script.google.com/macros/s/AKfycbyPjPmxFRFUzZ-daWluMy1ocjZxiYlXbkeuZg-lIbPA-PtfwnzHipbdKWA_kib-lJiA/exec";
+const RESULTS_URL = "https://script.google.com/macros/s/AKfycbxqXcQnUka4o-d4CjNFrYZnG7vnFQZOIekmFtyIgBXnEeRI-IpB5GG1Dtc3fmv-LZU/exec";
+const SEASONS = [
+  { id:'pavasaris', label:'Pavasaris', emoji:'🌱', months:'Marts–Maijs' },
+  { id:'vasara', label:'Vasara', emoji:'☀️', months:'Jūnijs–Augusts' },
+  { id:'rudens', label:'Rudens', emoji:'🍂', months:'Septembris–Oktobris' },
+];
+let plants = [
+  { id:1, name:'Pļavas margrietiņa', latin:'Leucanthemum vulgare', hint:'Balti ziedlapiņi ap dzeltenu centru. Bieži aug pļavās un ceļmalās.', season:'vasara' },
+  { id:2, name:'Sarkanais āboliņš', latin:'Trifolium pratense', hint:'Apaļas rozā-purpura ziedu galviņas, trīs lapas ar gaišu lāsīti.', season:'vasara' },
+  { id:3, name:'Pienene', latin:'Taraxacum officinale', hint:'Spilgti dzelteni ziedi vai balts pūkainis sēklu bumbulis.', season:'pavasaris' },
+  { id:4, name:'Zilais zvaniņš', latin:'Campanula patula', hint:'Smalki violeti-zili zvaniņi uz plāniem kātiem.', season:'vasara' },
+  { id:5, name:'Asinszāle', latin:'Hypericum perforatum', hint:'Dzelteni 5-lapiņu ziedi. Lapas izskatās ar caurumiem pret gaismu.', season:'vasara' },
+  { id:6, name:'Parastā vīgrieze', latin:'Filipendula ulmaria', hint:'Balti smalki ziediņi biezos ķekaros. Smaržo maigu.', season:'vasara' },
+  { id:7, name:'Āra plūksna', latin:'Achillea millefolium', hint:'Plakanvirsas baltu vai rozā ziedu klāji. Smalki sazarotas lapas.', season:'vasara' },
+  { id:8, name:'Pavasara gaiļbiksīte', latin:'Primula veris', hint:'Dzelteni mazie ziediņi karātavās uz viena kāta. Lapas rozetē.', season:'pavasaris' },
+  { id:9, name:'Zilā rudzupuķe', latin:'Centaurea cyanus', hint:'Spilgti zili vai violeti ziedi ar iegriestiem ziedlapiņiem.', season:'vasara' },
+  { id:10, name:'Meža silene', latin:'Silene dioica', hint:'Koši rozā piecziedlapu ziedi. Aug mitros pļavas malās.', season:'pavasaris' },
+  { id:11, name:'Parastā vērsene', latin:'Calluna vulgaris', hint:'Sīki violeti-rozā zvaniņi uz kļūstošiem zariem.', season:'rudens' },
+  { id:12, name:'Rudens dadzis', latin:'Cirsium arvense', hint:'Violeta vai rozā dadzīga ziedu galviņa. Lapas ar dzeloņiem.', season:'rudens' },
+];
+let nextId = 13;
+let st = { view:'name', playerName:'', season:null, queue:[], cur:0, score:0, att:0, results:[], phase:'task', imgData:null, imgMime:null, explain:null, errMsg:null, editPlant:null, leaderboard:[] };
+
 function setSbar(t,r=''){document.getElementById('sbar-title').textContent=t;document.getElementById('sbar-right').textContent=r;}
 function render(){const ui=document.getElementById('ui');if(st.view==='name')renderName(ui);else if(st.view==='home')renderHome(ui);else if(st.view==='editor')renderEditor(ui);else if(st.view==='edit_form')renderEditForm(ui);else if(st.view==='game')renderGame(ui);else if(st.view==='saving')renderSaving(ui);else if(st.view==='end')renderEnd(ui);}
-function renderName(ui){setSbar('🌼 Pļavu ziedi','');ui.innerHTML=`<div class="name-screen"><div style="font-size:52px;margin-bottom:12px">🌿</div><div style="font-size:20px;font-weight:700;color:#1a1a1a;margin-bottom:6px">Laipni lūgti!</div><div style="font-size:14px;color:#888;margin-bottom:24px;line-height:1.6">Atrod pļavas augus un fotografē.<br>AI pārbaudīs vai pareizi!</div><div style="text-align:left;margin-bottom:6px"><label class="form-label">Tavs vārds</label><input class="name-input-big" type="text" id="player-name" placeholder="Ievadi savu vārdu..." maxlength="30" onkeydown="if(event.key==='Enter')startWithName()"></div><button class="btn-primary" onclick="startWithName()">Sākt spēli →</button></div>`;setTimeout(()=>{const el=document.getElementById('player-name');if(el)el.focus();},100);}
+
+function renderName(ui){
+  setSbar('🌼 Pļavu ziedi','');
+  ui.innerHTML=`<div class="name-screen"><div style="font-size:52px;margin-bottom:12px">🌿</div><div style="font-size:20px;font-weight:700;color:#1a1a1a;margin-bottom:6px">Laipni lūgti!</div><div style="font-size:14px;color:#888;margin-bottom:24px;line-height:1.6">Atrod pļavas augus un fotografē.<br>AI pārbaudīs vai pareizi!</div><div style="text-align:left;margin-bottom:6px"><label class="form-label">Tavs vārds</label><input class="name-input-big" type="text" id="player-name" placeholder="Ievadi savu vārdu..." maxlength="30" onkeydown="if(event.key==='Enter')startWithName()"></div><button class="btn-primary" onclick="startWithName()">Sākt spēli →</button></div>`;
+  setTimeout(()=>{const el=document.getElementById('player-name');if(el)el.focus();},100);
+}
 function startWithName(){const name=document.getElementById('player-name').value.trim();if(!name){alert('Lūdzu ievadi savu vārdu!');return;}st.playerName=name;st.view='home';render();}
-function renderHome(ui){setSbar('🌼 Pļavu ziedi','');const seasons=SEASONS.map(s=>{const count=plants.filter(p=>p.season===s.id).length;return`<button class="season-btn" onclick="startSeason('${s.id}')" ${count===0?'disabled':''}><span style="font-size:28px">${s.emoji}</span><div><div class="season-name">${s.label} <span style="font-size:12px;color:#aaa;font-weight:400">(${s.months})</span></div><div class="season-sub">${count} augi sarakstā</div></div></button>`;}).join('');ui.innerHTML=`<div style="font-size:14px;color:#3B6D11;font-weight:600;margin-bottom:14px">Sveiks, ${st.playerName}! 👋</div><p style="font-size:16px;font-weight:700;color:#1a1a1a;margin:0 0 4px">Izvēlies sezonu</p><p style="font-size:13px;color:#888;margin:0 0 16px;line-height:1.5">Atrod un fotografē pļavas augus — AI pārbaudīs vai pareizi!</p>${seasons}<hr class="divider"><button class="btn-secondary" onclick="st.view='editor';render()">✏️ Rediģēt augu sarakstu</button>`;}
-function renderEditor(ui){setSbar('✏️ Augu saraksts','');const rows=plants.map(p=>`<div class="plant-row"><div class="plant-info"><div class="plant-name-r">${p.name}</div><div class="plant-latin-r">${p.latin}</div></div><span class="season-badge ${p.season}">${SEASONS.find(s=>s.id===p.season)?.label||p.season}</span><button class="icon-btn" onclick="editPlant(${p.id})">✏️</button><button class="icon-btn" onclick="deletePlant(${p.id})">🗑️</button></div>`).join('');ui.innerHTML=`<div style="margin-bottom:14px">${rows}</div><button class="btn-primary" onclick="newPlant()">＋ Pievienot jaunu augu</button><button class="btn-secondary" onclick="st.view='home';render()">← Atpakaļ</button>`;}
-function renderEditForm(ui){const p=st.editPlant;const isNew=!p.id;setSbar(isNew?'➕ Jauns augs':'✏️ Labot augu','');const opts=SEASONS.map(s=>`<option value="${s.id}" ${p.season===s.id?'selected':''}>${s.label}</option>`).join('');ui.innerHTML=`<div class="form-group"><label class="form-label">Nosaukums latviski</label><input type="text" id="f-name" value="${p.name||''}" placeholder="Pļavas margrietiņa"></div><div class="form-group"><label class="form-label">Latīniskais nosaukums</label><input type="text" id="f-latin" value="${p.latin||''}" placeholder="Leucanthemum vulgare" style="font-style:italic"></div><div class="form-group"><label class="form-label">Sezona</label><select id="f-season">${opts}</select></div><div class="form-group"><label class="form-label">Mājiens spēlētājam</label><textarea id="f-hint" placeholder="Apraksti kā augu atpazīt pļavā...">${p.hint||''}</textarea></div><button class="btn-primary" onclick="savePlant()">✅ ${isNew?'Pievienot augu':'Saglabāt izmaiņas'}</button><button class="btn-secondary" onclick="st.view='editor';render()">Atcelt</button>`;}
-function renderGame(ui){if(st.cur>=st.queue.length){saveResults();return;}const p=st.queue[st.cur];const pct=Math.round((st.cur/st.queue.length)*100);const season=SEASONS.find(s=>s.id===st.season);setSbar((season?.emoji||'')+' '+(season?.label||'Spēle'),st.score+' pt');if(st.phase==='task'){let dots='';for(let i=0;i<3;i++)dots+=`<div class="attempt-dot ${i<st.att?'used':i===st.att?'active':''}"></div>`;const upArea=st.imgData?`<img src="${st.imgData}" class="preview-img" alt="foto"><div class="clear-photo" onclick="clearImg()">✕ Nomainīt foto</div>`:`<div class="upload-area"><input type="file" accept="image/*" capture="environment" onchange="handleFile(event)"><div class="upload-icon">📷</div><div class="upload-text">Pieskarties, lai uzņemtu vai atlasītu foto</div></div>`;const errHtml=st.errMsg?`<div class="error-box">⚠️ ${st.errMsg}</div>`:'';ui.innerHTML=`<div class="progress-row"><div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div><span class="progress-text">${st.cur+1} / ${st.queue.length}</span></div><div class="task-card"><div class="task-label">🌿 Atrod šo augu</div><div class="task-name">${p.name}</div><div class="task-latin">${p.latin}</div><div class="task-hint">${p.hint}</div></div><div class="attempts-row">${dots}<span class="attempts-label">${3-st.att} mēģinājumi atlikuši</span></div>${upArea}${errHtml}<button class="btn-primary" ${!st.imgData?'disabled':''} onclick="checkPhoto()">🔍 Pārbaudīt ar AI</button><button class="btn-secondary" onclick="skipPlant()">Izlaist šo augu</button>`;}else if(st.phase==='loading'){const msgs=["Analizē auga formu...","Salīdzina ar datubāzi...","Pārbauda pazīmes...","Claude domā..."];ui.innerHTML=`<div class="task-card"><div class="task-name" style="font-size:17px">${p.name}</div><div class="task-latin">${p.latin}</div></div><img src="${st.imgData}" class="preview-img" alt="foto"><div class="loading-box"><div class="spinner"></div><div class="loading-text">AI analizē tavu foto...</div><div class="loading-sub" id="lmsg">${msgs[0]}</div></div>`;let mi=0;window._li=setInterval(()=>{const el=document.getElementById('lmsg');if(el){mi=(mi+1)%msgs.length;el.textContent=msgs[mi];}},900);}else if(st.phase==='ok'){const pts=Math.max(1,3-st.att+1);ui.innerHTML=`<div class="task-card"><div class="task-name" style="font-size:17px">${p.name}</div><div class="task-latin">${p.latin}</div></div><img src="${st.imgData}" class="preview-img" alt="foto"><div class="result-box ok"><div style="font-size:36px">✅</div><div class="result-title ok">Pareizi!</div><div class="result-desc ok">${st.explain||''}</div><div class="result-pts">+${pts} punkti</div></div><button class="btn-primary" onclick="nextPlant()">Nākamais augs →</button>`;}else if(st.phase==='fail'){const left=3-st.att;ui.innerHTML=`<div class="task-card"><div class="task-name" style="font-size:17px">${p.name}</div><div class="task-latin">${p.latin}</div></div><img src="${st.imgData}" class="preview-img" alt="foto"><div class="result-box fail"><div style="font-size:36px">❌</div><div class="result-title fail">${left===0?'Mēģinājumi beigušies':'Nepareizi'}</div><div class="result-desc fail">${st.explain||''}</div></div>${left>0?`<button class="btn-primary" onclick="retryPlant()">📷 Mēģināt vēlreiz (${left} atlikuši)</button>`:`<button class="btn-primary" onclick="nextPlant()">Nākamais augs →</button>`}`;}}
+
+function renderHome(ui){
+  setSbar('🌼 Pļavu ziedi','');
+  const seasons=SEASONS.map(s=>{const count=plants.filter(p=>p.season===s.id).length;return`<button class="season-btn" onclick="startSeason('${s.id}')" ${count===0?'disabled':''}><span style="font-size:28px">${s.emoji}</span><div><div class="season-name">${s.label} <span style="font-size:12px;color:#aaa;font-weight:400">(${s.months})</span></div><div class="season-sub">${count} augi sarakstā</div></div></button>`;}).join('');
+  ui.innerHTML=`<div style="font-size:14px;color:#3B6D11;font-weight:600;margin-bottom:14px">Sveiks, ${st.playerName}! 👋</div><p style="font-size:16px;font-weight:700;color:#1a1a1a;margin:0 0 4px">Izvēlies sezonu</p><p style="font-size:13px;color:#888;margin:0 0 16px;line-height:1.5">Atrod un fotografē pļavas augus — AI pārbaudīs vai pareizi!</p>${seasons}<hr class="divider"><button class="btn-secondary" onclick="st.view='editor';render()">✏️ Rediģēt augu sarakstu</button>`;
+}
+
+function renderEditor(ui){
+  setSbar('✏️ Augu saraksts','');
+  const rows=plants.map(p=>`<div class="plant-row"><div class="plant-info"><div class="plant-name-r">${p.name}</div><div class="plant-latin-r">${p.latin}</div></div><span class="season-badge ${p.season}">${SEASONS.find(s=>s.id===p.season)?.label||p.season}</span><button class="icon-btn" onclick="editPlant(${p.id})">✏️</button><button class="icon-btn" onclick="deletePlant(${p.id})">🗑️</button></div>`).join('');
+  ui.innerHTML=`<div style="margin-bottom:14px">${rows}</div><button class="btn-primary" onclick="newPlant()">＋ Pievienot jaunu augu</button><button class="btn-secondary" onclick="st.view='home';render()">← Atpakaļ</button>`;
+}
+
+function renderEditForm(ui){
+  const p=st.editPlant;const isNew=!p.id;setSbar(isNew?'➕ Jauns augs':'✏️ Labot augu','');
+  const opts=SEASONS.map(s=>`<option value="${s.id}" ${p.season===s.id?'selected':''}>${s.label}</option>`).join('');
+  ui.innerHTML=`<div class="form-group"><label class="form-label">Nosaukums latviski</label><input type="text" id="f-name" value="${p.name||''}" placeholder="Pļavas margrietiņa"></div><div class="form-group"><label class="form-label">Latīniskais nosaukums</label><input type="text" id="f-latin" value="${p.latin||''}" placeholder="Leucanthemum vulgare" style="font-style:italic"></div><div class="form-group"><label class="form-label">Sezona</label><select id="f-season">${opts}</select></div><div class="form-group"><label class="form-label">Mājiens spēlētājam</label><textarea id="f-hint" placeholder="Apraksti kā augu atpazīt pļavā...">${p.hint||''}</textarea></div><button class="btn-primary" onclick="savePlant()">✅ ${isNew?'Pievienot augu':'Saglabāt izmaiņas'}</button><button class="btn-secondary" onclick="st.view='editor';render()">Atcelt</button>`;
+}
+
+function renderGame(ui){
+  if(st.cur>=st.queue.length){saveResults();return;}
+  const p=st.queue[st.cur];const pct=Math.round((st.cur/st.queue.length)*100);
+  const season=SEASONS.find(s=>s.id===st.season);
+  setSbar((season?.emoji||'')+' '+(season?.label||'Spēle'),st.score+' pt');
+  if(st.phase==='task'){
+    let dots='';for(let i=0;i<3;i++)dots+=`<div class="attempt-dot ${i<st.att?'used':i===st.att?'active':''}"></div>`;
+    const upArea=st.imgData?`<img src="${st.imgData}" class="preview-img" alt="foto"><div class="clear-photo" onclick="clearImg()">✕ Nomainīt foto</div>`:`<div class="upload-area"><input type="file" accept="image/*" capture="environment" onchange="handleFile(event)"><div class="upload-icon">📷</div><div class="upload-text">Pieskarties, lai uzņemtu vai atlasītu foto</div></div>`;
+    const errHtml=st.errMsg?`<div class="error-box">⚠️ ${st.errMsg}</div>`:'';
+    ui.innerHTML=`<div class="progress-row"><div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div><span class="progress-text">${st.cur+1} / ${st.queue.length}</span></div><div class="task-card"><div class="task-label">🌿 Atrod šo augu</div><div class="task-name">${p.name}</div><div class="task-latin">${p.latin}</div><div class="task-hint">${p.hint}</div></div><div class="attempts-row">${dots}<span class="attempts-label">${3-st.att} mēģinājumi atlikuši</span></div>${upArea}${errHtml}<button class="btn-primary" ${!st.imgData?'disabled':''} onclick="checkPhoto()">🔍 Pārbaudīt ar AI</button><button class="btn-secondary" onclick="skipPlant()">Izlaist šo augu</button>`;
+  } else if(st.phase==='loading'){
+    const msgs=["Analizē auga formu...","Salīdzina ar datubāzi...","Pārbauda pazīmes...","Claude domā..."];
+    ui.innerHTML=`<div class="task-card"><div class="task-name" style="font-size:17px">${p.name}</div><div class="task-latin">${p.latin}</div></div><img src="${st.imgData}" class="preview-img" alt="foto"><div class="loading-box"><div class="spinner"></div><div class="loading-text">AI analizē tavu foto...</div><div class="loading-sub" id="lmsg">${msgs[0]}</div></div>`;
+    let mi=0;window._li=setInterval(()=>{const el=document.getElementById('lmsg');if(el){mi=(mi+1)%msgs.length;el.textContent=msgs[mi];}},900);
+  } else if(st.phase==='ok'){
+    const pts=3-st.att;
+    ui.innerHTML=`<div class="task-card"><div class="task-name" style="font-size:17px">${p.name}</div><div class="task-latin">${p.latin}</div></div><img src="${st.imgData}" class="preview-img" alt="foto"><div class="result-box ok"><div style="font-size:36px">✅</div><div class="result-title ok">Pareizi!</div><div class="result-desc ok">${st.explain||''}</div><div class="result-pts">+${pts} punkti</div></div><button class="btn-primary" onclick="nextPlant()">Nākamais augs →</button>`;
+  } else if(st.phase==='fail'){
+    const left=3-st.att;
+    ui.innerHTML=`<div class="task-card"><div class="task-name" style="font-size:17px">${p.name}</div><div class="task-latin">${p.latin}</div></div><img src="${st.imgData}" class="preview-img" alt="foto"><div class="result-box fail"><div style="font-size:36px">❌</div><div class="result-title fail">${left===0?'Mēģinājumi beigušies':'Nepareizi'}</div><div class="result-desc fail">${st.explain||''}</div></div>${left>0?`<button class="btn-primary" onclick="retryPlant()">📷 Mēģināt vēlreiz (${left} atlikuši)</button>`:`<button class="btn-primary" onclick="nextPlant()">Nākamais augs →</button>`}`;
+  }
+}
+
 function renderSaving(ui){setSbar('🏆 Rezultāts','');ui.innerHTML=`<div class="saving-box"><div class="spinner" style="margin-bottom:12px"></div><div>Saglabā rezultātus...</div></div>`;}
-function renderEnd(ui){setSbar('🏆 Rezultāts','');const max=st.queue.length*3;const pct=Math.round((st.score/max)*100);const msg=pct>=80?'🌟 Izcili! Tu esi īsts dabas pētnieks!':pct>=50?'👍 Labi! Vēl nedaudz prakses!':'🌱 Labs sākums! Turpini!';const list=st.results.map(r=>`<div class="found-item"><div class="found-dot ${r.found?'ok':'miss'}"></div><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.name}</span><span class="found-pts">${r.found?'+'+r.pts+' pt':'—'}</span></div>`).join('');let lbHtml='';if(st.leaderboard&&st.leaderboard.length>0){const rows=st.leaderboard.slice(0,8).map((r,i)=>`<div class="lb-row" style="${r.name===st.playerName?'background:#f0f9e8;border-radius:8px;padding:7px 6px;':''}"><span class="lb-rank">${i===0?'🥇':i===1?'🥈':i===2?'🥉':(i+1)+'.'}</span><span class="lb-name">${r.name}</span><span class="lb-score">${r.score}</span><span class="lb-pct">(${r.pct}%)</span></div>`).join('');lbHtml=`<div class="leaderboard"><div class="lb-title">🏆 Rezultātu tabula</div>${rows}</div>`;}ui.innerHTML=`<div class="end-screen"><div style="font-size:52px;margin-bottom:4px">🏆</div><div style="font-size:20px;font-weight:700;margin-bottom:2px">${st.playerName} — spēle pabeigta!</div><div class="end-score">${st.score}</div><div class="end-max">no ${max} punktiem (${pct}%)</div><div style="font-size:14px;color:#555;margin-bottom:18px;line-height:1.5">${msg}</div>${lbHtml}<div class="found-list">${list}</div><button class="btn-primary" onclick="playAgain()">🔄 Spēlēt vēlreiz</button><button class="btn-secondary" onclick="newPlayer()">👤 Jauns spēlētājs</button></div>`;}
-async function saveResults(){st.view='saving';render();const max=st.queue.length*3;const season=SEASONS.find(s=>s.id===st.season)?.label||st.season;try{await fetch(RESULTS_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({name:st.playerName,score:st.score,max,season})});}catch(e){}await loadLeaderboard();st.view='end';render();}
-async function loadLeaderboard(){try{const resp=await fetch(RESULTS_URL+'?action=leaderboard');if(resp.ok){const data=await resp.json();if(data.leaderboard)st.leaderboard=data.leaderboard;}}catch(e){st.leaderboard=[];}}
+
+function renderEnd(ui){
+  setSbar('🏆 Rezultāts','');
+  const max=st.queue.length*3;const pct=Math.round((st.score/max)*100);
+  const msg=pct>=80?'🌟 Izcili! Tu esi īsts dabas pētnieks!':pct>=50?'👍 Labi! Vēl nedaudz prakses!':'🌱 Labs sākums! Turpini!';
+  const list=st.results.map(r=>`<div class="found-item"><div class="found-dot ${r.found?'ok':'miss'}"></div><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.name}</span><span class="found-pts">${r.found?'+'+r.pts+' pt':'—'}</span></div>`).join('');
+  let lbHtml='';
+  if(st.leaderboard&&st.leaderboard.length>0){
+    const rows=st.leaderboard.slice(0,8).map((r,i)=>`<div class="lb-row" style="${r.name===st.playerName?'background:#f0f9e8;border-radius:8px;padding:7px 6px;':''}"><span class="lb-rank">${i===0?'🥇':i===1?'🥈':i===2?'🥉':(i+1)+'.'}</span><span class="lb-name">${r.name}</span><span class="lb-score">${r.score}</span><span class="lb-pct">(${r.pct}%)</span></div>`).join('');
+    lbHtml=`<div class="leaderboard"><div class="lb-title">🏆 Rezultātu tabula</div>${rows}</div>`;
+  }
+  ui.innerHTML=`<div class="end-screen"><div style="font-size:52px;margin-bottom:4px">🏆</div><div style="font-size:20px;font-weight:700;margin-bottom:2px">${st.playerName} — spēle pabeigta!</div><div class="end-score">${st.score}</div><div class="end-max">no ${max} punktiem (${pct}%)</div><div style="font-size:14px;color:#555;margin-bottom:18px;line-height:1.5">${msg}</div>${lbHtml}<div class="found-list">${list}</div><button class="btn-primary" onclick="playAgain()">🔄 Spēlēt vēlreiz</button><button class="btn-secondary" onclick="newPlayer()">👤 Jauns spēlētājs</button></div>`;
+}
+
+async function saveResults(){
+  st.view='saving';render();
+  const max=st.queue.length*3;
+  const season=SEASONS.find(s=>s.id===st.season)?.label||st.season;
+  try{await fetch(RESULTS_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({name:st.playerName,score:st.score,max,season})});}catch(e){}
+  await loadLeaderboard();
+  st.view='end';render();
+}
+
+async function loadLeaderboard(){
+  try{const resp=await fetch(RESULTS_URL+'?action=leaderboard');if(resp.ok){const data=await resp.json();if(data.leaderboard)st.leaderboard=data.leaderboard;}}catch(e){st.leaderboard=[];}
+}
+
 function startSeason(id){const q=plants.filter(p=>p.season===id).sort(()=>Math.random()-0.5);if(!q.length)return;st={...st,view:'game',season:id,queue:q,cur:0,score:0,att:0,results:[],phase:'task',imgData:null,imgMime:null,explain:null,errMsg:null};render();}
 function newPlant(){st.editPlant={name:'',latin:'',hint:'',season:'vasara'};st.view='edit_form';render();}
 function editPlant(id){st.editPlant={...plants.find(p=>p.id===id)};st.view='edit_form';render();}
@@ -134,12 +219,47 @@ function deletePlant(id){if(confirm('Dzēst šo augu?')){plants=plants.filter(p=
 function savePlant(){const name=document.getElementById('f-name').value.trim();const latin=document.getElementById('f-latin').value.trim();const season=document.getElementById('f-season').value;const hint=document.getElementById('f-hint').value.trim();if(!name){alert('Ievadi auga nosaukumu!');return;}if(st.editPlant.id){const idx=plants.findIndex(p=>p.id===st.editPlant.id);if(idx>=0)plants[idx]={...plants[idx],name,latin,season,hint};}else{plants.push({id:nextId++,name,latin,season,hint});}st.view='editor';render();}
 function handleFile(e){const f=e.target.files[0];if(!f)return;st.imgMime=f.type||'image/jpeg';const r=new FileReader();r.onload=ev=>{st.imgData=ev.target.result;st.errMsg=null;render();};r.readAsDataURL(f);}
 function clearImg(){st.imgData=null;st.imgMime=null;st.errMsg=null;render();}
-async function checkPhoto(){if(!st.imgData)return;clearInterval(window._li);st.phase='loading';st.errMsg=null;render();try{const base64=st.imgData.split(',')[1];const mime=st.imgMime||'image/jpeg';const plant=st.queue[st.cur];const resp=await fetch(AI_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({image:base64,mimeType:mime,plant:plant.name+' ('+plant.latin+')'})});clearInterval(window._li);const text=await resp.text();let data;try{data=JSON.parse(text);}catch(e){throw new Error('Serveris neatgrieza derīgu atbildi.');}if(data.error)throw new Error(data.error);st.explain=data.explain||'';if(data.correct){const pts=Math.max(1,3-st.att+1);st.score+=pts;st.results.push({name:plant.name,pts,found:true});st.phase='ok';}else{st.att++;if(st.att>=3)st.results.push({name:plant.name,pts:0,found:false});st.phase='fail';}}catch(err){clearInterval(window._li);st.phase='task';st.errMsg=err.message||'Kļūda. Pārbaudi interneta savienojumu.';}render();}
+
+async function checkPhoto(){
+  if(!st.imgData)return;
+  clearInterval(window._li);
+  st.phase='loading';st.errMsg=null;render();
+  try{
+    const base64=st.imgData.split(',')[1];
+    const mime=st.imgMime||'image/jpeg';
+    const plant=st.queue[st.cur];
+    const resp=await fetch(AI_URL,{
+      method:'POST',
+      headers:{'Content-Type':'text/plain'},
+      body:JSON.stringify({image:base64,mimeType:mime,plant:plant.name+' ('+plant.latin+')'})
+    });
+    clearInterval(window._li);
+    const text=await resp.text();
+    let data;
+    try{data=JSON.parse(text);}catch(e){throw new Error('Serveris neatgrieza derīgu atbildi.');}
+    if(data.error)throw new Error(data.error);
+    st.explain=data.explain||'';
+    if(data.correct){
+      const pts=3-st.att;st.score+=pts;
+      st.results.push({name:plant.name,pts,found:true});st.phase='ok';
+    }else{
+      st.att++;
+      if(st.att>=3)st.results.push({name:plant.name,pts:0,found:false});
+      st.phase='fail';
+    }
+  }catch(err){
+    clearInterval(window._li);st.phase='task';
+    st.errMsg=err.message||'Kļūda. Pārbaudi interneta savienojumu.';
+  }
+  render();
+}
+
 function retryPlant(){st.imgData=null;st.imgMime=null;st.phase='task';st.errMsg=null;render();}
 function nextPlant(){st.cur++;st.att=0;st.imgData=null;st.imgMime=null;st.explain=null;st.errMsg=null;st.phase='task';render();}
 function skipPlant(){st.results.push({name:st.queue[st.cur].name,pts:0,found:false});nextPlant();}
 function playAgain(){startSeason(st.season);}
 function newPlayer(){st={...st,view:'name',playerName:''};render();}
+
 render();
 </script>
 </body>
